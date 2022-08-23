@@ -1,6 +1,4 @@
-﻿
-
-@{
+﻿@{
     ViewBag.Title = "RSS-ридер";
     Layout = "/Views/RSS/Layout.cshtml";
 }
@@ -14,69 +12,107 @@
     <title>RssIndex</title>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <style>
-        h2 a { color: #363636; }    
-    </style>
-   
-    <style type="text/css">
-        .space { 
-            padding: 20px; /* Поля */
-            background: #E5D3BD; /* Цвет фона */
-            border: 2px solid #E81E25; /* Параметры рамки */
+        h2 a {
+            color: #363636;
         }
     </style>
-    
+
+    <style type="text/css">
+        .space {
+            padding: 20px; /* Поля */
+            background: #FFFAFA; /* Цвет фона */
+            border: 2px solid #B3B3B3; /* Параметры рамки */
+        }
+    </style>
+
+    <style type="text/css">
+        img {
+            width: 60px;
+            height: 60%;
+        }
+    </style>
+
 </head>
 <body>
     @inject IConfiguration configuration
     <h2>Current UpTime: @configuration["UpdateTime:Value"]</h2>
-
+    <p><input type="checkbox" value="Включить форматирование" onclick="ChangeFormat()"></p>
     <p><input type="button" value="Проверить" onclick="getInfo()"></p>
+
+    <label for="UpdateTime" class="form-label">Частота обновления ленты:</label>
+    <input id="elem1" type="text" name="UpdateTime" />
+    <input id="butt" type="button" value="Кнопка" onclick="ChangeUpdateInterval()"/>
 
     <div style="border-bottom: 1px solid black;" id="update_status"></div>
 
     <div id="result_text"></div>
-    
+
 
     <script>
         let timerId = setTimeout(function getInfo() {
             $("#update_status").text("Обновляем данные");
             $.post("/RSS/RssIndex")
                 .done(function(data) {
-
+            
                     var count = data.length;
 
 
-                    @*С ФОРМАТИРОВАВАНИЕМ ПО ТЕГАМ*@
-                    var results = $('#result_text'); // получаем нужный элемент
+        @*С ФОРМАТИРОВАВАНИЕМ ПО ТЕГАМ*@
+                                                                    var results = $('#result_text'); // получаем нужный элемент
                     results.empty(); //очищаем элемент
                     for (var i = 0; i < data.length; i++) {
 
                         // добавляем данные в список
-                        results.append('<div style="border-bottom: 1px solid black;"><h2><a href=' + data[i].link + 'target="_blank">' + data[i].title + '</a></h2><div class="space" id="description' + i +'">' + 
-                        '</div><p>Дата добавления: <b>' + data[i].publishDate + '</b></p></div>'); 
-
-                        //var desc = data[i].description;
-                        //data[i].description = desc.replace('class="','class = "blockForImg')
+                        results.append('<div style="border-bottom: 1px solid black;"><h2><a href=' + data[i].link + 'target="_blank">' + data[i].title + '</a></h2><div class="space" id="description' + i + '">' +
+                            '</div><p>Дата добавления: <b>' + data[i].publishDate + '</b></p></div>');
+                        const s1 = 'true';
+                        @inject IConfiguration configurationData
+                        if (@configurationData["DescriptionFormating:Enable"] === true) {
+                        //if (@configuration["DescriptionFormating:Enable"] == "true") {
+                            $("#description" + i).html(data[i].description);
+                            $("#update_status").text(@configurationData["DescriptionFormating:Enable"]);
+                        }
+                        else {
+                            $("#description" + i).text(data[i].description);
+                            $("#update_status").text(@configurationData["DescriptionFormating:Enable"]);
+                        }
                         
 
-                        $("#description" + i).text(data[i].description);
-                        
                         //Убираем сообщение об обновлении данных
-                        var update_status = $("#update_status");
-                        update_status.empty(); 
+                        //var update_status = $("#update_status");
+                        //update_status.empty();
                     }
 
-                    
+
 
 
                     //$("#result_text").text(result_str);
-                    //$("#result_text").html(result_str); 
+                    //$("#result_text").html(result_str);
                     timerId = setTimeout(getInfo, @configuration["UpdateTime:Value"] * 1000); // (*)
-                });    
+                });
         }, 0);
 
+
+
+        function ChangeFormat() {
+            
+            $.post("/RSS/RssFormat")
+                .done(function(data) {
+                });
+        }
+
+        function ChangeUpdateInterval() {
+            var val = document.getElementById('elem1').value;
+            $.post("/RSS/RssChangeUpdateTime", { param: val})
+                .done(function(data) {
+                });
+        }
+
+
+
+
     </script>
-    
+
 
 </body>
 </html>

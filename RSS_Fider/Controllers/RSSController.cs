@@ -40,5 +40,18 @@ namespace RSS_Fider.Controllers
             return PartialView();
         }
 
+        [HttpPost]
+        public void RssFormat([FromServices] IConfiguration configuration)
+        {
+            if (configuration["DescriptionFormating:Enable"] == "false") configuration["DescriptionFormating:Enable"] = "true";
+            if (configuration["DescriptionFormating:Enable"] == "true") configuration["DescriptionFormating:Enable"] = "false";
+        }
+
+        [HttpPost]
+        public void RssChangeUpdateTime([FromServices] IConfiguration configuration, string param)
+        {
+            configuration["UpdateTime:Value"] = param;
+        }
+
     }
 }
