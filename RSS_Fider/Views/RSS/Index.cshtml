@@ -1,0 +1,23 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>RssIndex</title>
+</head>
+<body>
+    @foreach (var item in ViewBag.listItems)
+    {
+        <div style="border-bottom: 1px solid black;">
+            <p>@item.Title</p>
+            <p>@item.Description</p>
+            <p>@item.PublishDate</p>
+        </div>
+    }
+</body>
+</html>

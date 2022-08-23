@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<FeedUrl URL ="http://www.pobeda-aksay.ru/feed/" />
+	<UpdateTime Value ="10" />
+	<ProxySettings Address ="94.158.189.78:50207">
+		<Login>8fu9jxas</Login>
+		<Password>bxnbWr4V</Password>
+	</ProxySettings>
+</configuration>
+
+
+
+
+
+<!--В файле настроек хранится:
+Лента, которую обрабатывает фидер. По умолчанию это (https://habr.com/rss/interesting/).
+Частота обновления ленты приложением.  
+
+Настройки для прокси-сервера - 
+адрес и учётные данные для подключения.-->

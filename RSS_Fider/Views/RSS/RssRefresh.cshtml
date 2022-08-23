@@ -1,0 +1,85 @@
+﻿
+
+@{
+    ViewBag.Title = "RSS-ридер";
+    Layout = "/Views/RSS/Layout.cshtml";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>RssIndex</title>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <style>
+        h2 a { color: #363636; }    
+    </style>
+   
+    <style type="text/css">
+        .space { 
+            padding: 20px; /* Поля */
+            background: #E5D3BD; /* Цвет фона */
+            border: 2px solid #E81E25; /* Параметры рамки */
+        }
+    </style>
+    
+</head>
+<body>
+    @inject IConfiguration configuration
+    <h2>Current UpTime: @configuration["UpdateTime:Value"]</h2>
+
+    <p><input type="button" value="Проверить" onclick="getInfo()"></p>
+
+    <div style="border-bottom: 1px solid black;" id="update_status"></div>
+
+    <div id="result_text"></div>
+    
+
+    <script>
+        let timerId = setTimeout(function getInfo() {
+            $("#update_status").text("Обновляем данные");
+            $.post("/RSS/RssIndex")
+                .done(function(data) {
+
+                    var count = data.length;
+
+
+                    @*С ФОРМАТИРОВАВАНИЕМ ПО ТЕГАМ*@
+                    var results = $('#result_text'); // получаем нужный элемент
+                    results.empty(); //очищаем элемент
+                    for (var i = 0; i < data.length; i++) {
+
+                        // добавляем данные в список
+                        results.append('<div style="border-bottom: 1px solid black;"><h2><a href=' + data[i].link + 'target="_blank">' + data[i].title + '</a></h2><div class="space" id="description' + i +'">' + 
+                        '</div><p>Дата добавления: <b>' + data[i].publishDate + '</b></p></div>'); 
+
+                        //var desc = data[i].description;
+                        //data[i].description = desc.replace('class="','class = "blockForImg')
+                        
+
+                        $("#description" + i).text(data[i].description);
+                        
+                        //Убираем сообщение об обновлении данных
+                        var update_status = $("#update_status");
+                        update_status.empty(); 
+                    }
+
+                    
+
+
+                    //$("#result_text").text(result_str);
+                    //$("#result_text").html(result_str); 
+                    timerId = setTimeout(getInfo, @configuration["UpdateTime:Value"] * 1000); // (*)
+                });    
+        }, 0);
+
+    </script>
+    
+
+</body>
+</html>
+
+
+

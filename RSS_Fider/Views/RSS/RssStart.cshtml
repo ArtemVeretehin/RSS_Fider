@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "RSS-ридер";
+    Layout = "/Views/RSS/Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>RssStart</title>
+    <style>
+        h2 a { color: #363636; }
+    </style>
+</head>
+<body>
+    @foreach (var item in ViewBag.listItems)
+    {
+        <div style="border-bottom: 1px solid black;">
+            <h2><a href=@item.Link target="_blank">@item.Title</a></h2>
+            <p>@item.Description</p>
+            <p>Дата добавления: <b>@item.PublishDate</b></p>
+        </div>
+    }
+</body>
+</html>
+
+
