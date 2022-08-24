@@ -10,7 +10,6 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 builder.Configuration.AddXmlFile("config.xml",optional:false,reloadOnChange:true);
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

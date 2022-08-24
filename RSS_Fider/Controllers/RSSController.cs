@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RSS_Fider.Rss;
 using System.Net;
+using RSS_Fider.Models;
 
 namespace RSS_Fider.Controllers
 {
@@ -40,6 +41,12 @@ namespace RSS_Fider.Controllers
             return PartialView();
         }
 
+        public IActionResult FeedsConfig([FromServices] IConfiguration configuration)
+        {
+            FeedsConfiguration feedsConfiguration = configuration.GetSection("Feeds").Get<FeedsConfiguration>();
+            return View(feedsConfiguration);
+        }
+
         [HttpPost]
         public void RssFormat([FromServices] IConfiguration configuration)
         {
@@ -50,8 +57,24 @@ namespace RSS_Fider.Controllers
         [HttpPost]
         public void RssChangeUpdateTime([FromServices] IConfiguration configuration, string param)
         {
+
             configuration["UpdateTime:Value"] = param;
         }
+
+        [HttpPost]
+        public void RssChangeFeedState([FromServices] IConfiguration configuration, string FeedId)
+        {
+            if (configuration[$"Feeds:Feeds_States:Enable:{FeedId}"] == "false") configuration[$"Feeds:Feeds_States:Enable:{FeedId}"] = "true";
+            if (configuration[$"Feeds:Feeds_States:Enable:{FeedId}"] == "true") configuration[$"Feeds:Feeds_States:Enable:{FeedId}"] = "false";
+
+        }
+
+        [HttpPost]
+        public void RssChangeFeedUrl([FromServices] IConfiguration configuration, string FeedId,string newUrl)
+        {
+            configuration[$"Feeds:Feeds_Addresses:Url:{FeedId}"] = newUrl;
+        }
+
 
     }
 }

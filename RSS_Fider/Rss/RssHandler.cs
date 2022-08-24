@@ -64,7 +64,7 @@ namespace RSS_Fider.Rss
             //Если конфиг не пустой, то получаем URL RSS-ленты
             if (FeederSettings is not null)
             {
-                XAttribute? FeedUrl_URL = FeederSettings.Element("FeedUrl")?.Attribute("URL");
+                XElement? FeedUrl_URL = FeederSettings.Element("FeedUrl")?.Element("FeedUrl_1");
                 RSS_URL = FeedUrl_URL?.Value;
             }
 

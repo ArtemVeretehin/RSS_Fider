@@ -36,12 +36,31 @@
 <body>
     @inject IConfiguration configuration
     <h2>Current UpTime: @configuration["UpdateTime:Value"]</h2>
-    <p><input type="checkbox" value="Включить форматирование" onclick="ChangeFormat()"></p>
+
+
+
+  
+
+
+
+
+    @if (configuration["DescriptionFormating:Enable"] == "true")
+    {
+        <p><input type="checkbox" name="FormatingState" checked onclick="ChangeFormat()"> <label for="FormatingState">Включить форматирование</label></p>
+    }
+    else
+    {
+        <p><input type="checkbox" name="FormatingState" onclick="ChangeFormat()"> <label for="FormatingState">Включить форматирование</label></p>
+    }
+
+
+
+
     <p><input type="button" value="Проверить" onclick="getInfo()"></p>
 
     <label for="UpdateTime" class="form-label">Частота обновления ленты:</label>
     <input id="elem1" type="text" name="UpdateTime" />
-    <input id="butt" type="button" value="Кнопка" onclick="ChangeUpdateInterval()"/>
+    <input id="butt" type="button" value="Кнопка" onclick="ChangeUpdateInterval()" />
 
     <div style="border-bottom: 1px solid black;" id="update_status"></div>
 
@@ -53,12 +72,12 @@
             $("#update_status").text("Обновляем данные");
             $.post("/RSS/RssIndex")
                 .done(function(data) {
-            
+
                     var count = data.length;
 
 
         @*С ФОРМАТИРОВАВАНИЕМ ПО ТЕГАМ*@
-                                                                    var results = $('#result_text'); // получаем нужный элемент
+                                                                                            var results = $('#result_text'); // получаем нужный элемент
                     results.empty(); //очищаем элемент
                     for (var i = 0; i < data.length; i++) {
 
@@ -66,9 +85,9 @@
                         results.append('<div style="border-bottom: 1px solid black;"><h2><a href=' + data[i].link + 'target="_blank">' + data[i].title + '</a></h2><div class="space" id="description' + i + '">' +
                             '</div><p>Дата добавления: <b>' + data[i].publishDate + '</b></p></div>');
                         const s1 = 'true';
-                        @inject IConfiguration configurationData
-                        if (@configurationData["DescriptionFormating:Enable"] === true) {
-                        //if (@configuration["DescriptionFormating:Enable"] == "true") {
+        @inject IConfiguration configurationData
+                                                if (@configurationData["DescriptionFormating:Enable"] === true) {
+                            //if (@configuration["DescriptionFormating:Enable"] == "true") {
                             $("#description" + i).html(data[i].description);
                             $("#update_status").text(@configurationData["DescriptionFormating:Enable"]);
                         }
@@ -76,7 +95,7 @@
                             $("#description" + i).text(data[i].description);
                             $("#update_status").text(@configurationData["DescriptionFormating:Enable"]);
                         }
-                        
+
 
                         //Убираем сообщение об обновлении данных
                         //var update_status = $("#update_status");
@@ -95,21 +114,20 @@
 
 
         function ChangeFormat() {
-            
+
             $.post("/RSS/RssFormat")
                 .done(function(data) {
                 });
+            location.reload();
         }
 
         function ChangeUpdateInterval() {
             var val = document.getElementById('elem1').value;
-            $.post("/RSS/RssChangeUpdateTime", { param: val})
+            $.post("/RSS/RssChangeUpdateTime", { param: val })
                 .done(function(data) {
                 });
+            location.reload();
         }
-
-
-
 
     </script>
 
