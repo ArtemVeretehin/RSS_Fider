@@ -1,6 +1,6 @@
 ﻿namespace RSS_Fider.Proxy
 {
-    public class ProxySettings
+    public class ProxyConfiguration
     {
         public string Address { get; set; }
         public string Login { get; set; }

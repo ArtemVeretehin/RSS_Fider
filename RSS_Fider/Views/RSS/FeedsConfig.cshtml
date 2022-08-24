@@ -14,8 +14,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
-    
-@inject IConfiguration configuration;
+
+    @inject IConfiguration configuration;
 
     <h1>Параметры RSS-фидера</h1>
 
@@ -34,7 +34,7 @@
     <input id="elem1" type="text" placeholder="Введите новое значение" name="UpdateTime" />
     <input id="butt" type="button" value="Подтвердить новое значение" onclick="ChangeUpdateInterval()" />
     @*Конец блока*@
-    
+
     <table class="table table-condensed table-striped table-bordered">
         <thead>
             <tr>
@@ -44,11 +44,11 @@
                 <th>Изменение адреса ленты</th>
             </tr>
         </thead>
-        
+
         <tbody>
-        
-        @for (int i = 0;i < Model.Feeds_Addresses.Url.Count; i++)
-        {
+
+            @for (int i = 0; i < Model.Feeds_Addresses.Url.Count; i++)
+            {
                 string FeedState = (Model.Feeds_States.Enable[i] == "true") ? "Включена" : "Выключена";
                 string EnableButtonTitle = (Model.Feeds_States.Enable[i] == "true") ? "Выключить ленту" : "Включить ленту";
                 string EnableButtonId = $"EnableButton{i}";
@@ -65,7 +65,7 @@
                         <input id=@ChangeButtonId type="button" value="Изменить" onclick="ChangeFeedUrl(@i)" />
                     </td>
                 </tr>
-        }
+            }
         </tbody>
     </table>
 
@@ -75,6 +75,7 @@
             $.post("/RSS/RssChangeFeedState", { FeedId: FeedId })
                 .done(function(data) {
                 });
+            location.reload();
         }
 
 
@@ -83,6 +84,7 @@
             $.post("/RSS/RssChangeFeedUrl", { FeedId: FeedId, newUrl: val })
                 .done(function(data) {
                 });
+            location.reload();
         }
 
 
@@ -103,6 +105,6 @@
         }
 
 
-    </script>   
+    </script>
 </body>
 </html>

@@ -11,14 +11,17 @@ namespace RSS_Fider.Rss
     {
         public static List<string>? GetListOfUrls(IConfiguration configuration)
         {
+            //Список-контейнер для адресов включенных пользователем Rss-лент
             List<string> RssFeed_Urls = new List<string>();
+            
+            //Привязка конфигурации к объекту FeedsConfiguration (Только секцию с настройками лент)
             FeedsConfiguration feedsConfiguration = configuration.GetSection("Feeds").Get<FeedsConfiguration>();
 
+            //Проверка состояния ленты. Если лента включена - нужно добавить ее адрес в список опроса
             for (int i = 0; i < feedsConfiguration.Feeds_Addresses.Url.Count; i++)
             {
                 if (feedsConfiguration.Feeds_States.Enable[i] == "true") RssFeed_Urls.Add(feedsConfiguration.Feeds_Addresses.Url[i]);
             }
-
 
             return RssFeed_Urls;
         }
@@ -26,42 +29,49 @@ namespace RSS_Fider.Rss
 
         public static async Task<List<RssItem>> GetRssContentHttpClient(IConfiguration configuration, List<string> RssFeed_Urls)
         {
-            ProxySettings proxySettings = configuration.GetSection("ProxySettings").Get<ProxySettings>();
+            //Привязка конфигурации к объекту ProxySettings (Только секцию с настройками прокси)
+            ProxyConfiguration proxyConfiguration = configuration.GetSection("ProxyConfiguration").Get<ProxyConfiguration>();
 
-            //Задаем параметры для прокси: данные покдлючения (IP,порт), учетные данные(логин, пароль)
-            WebProxy proxy = new WebProxy(proxySettings.Address, false);                                    //Правильный адрес - "94.158.189.78:50207
-            proxy.Credentials = new NetworkCredential(proxySettings.Login, proxySettings.Password);                              //Правильные логин/пароль "8fu9jxas", "bxnbWr4V"
+            //Определение параметров для прокси: данные покдлючения (IP,порт), учетные данные(логин, пароль)
+            WebProxy proxy = new WebProxy(proxyConfiguration.Address, false);                                    //Правильный адрес - "94.158.189.78:50207
+            proxy.Credentials = new NetworkCredential(proxyConfiguration.Login, proxyConfiguration.Password);    //Правильные логин/пароль "8fu9jxas", "bxnbWr4V"
 
+            //Создание обработчика HttpCLientHandler для HttpClient и передача ему данных о ранее сконфигурированном WebProxy
             HttpClientHandler httpClientHandler = new HttpClientHandler
             {
                 Proxy = proxy,
             };
-            //Создаем клиент и привязываем к нему прокси
+
+            //Создание клиента, привязка к нему обработчика и соответственно прокси
             HttpClient client = new HttpClient(handler: httpClientHandler, disposeHandler: true);
 
+            //Список-контейнер для элементов Rss-ленты
             List<RssItem> Rss_Items = new List<RssItem>();
 
+            //Для каждой включенной ленты
             foreach (string RssFeed_Url in RssFeed_Urls)
             {
-                //Получаем Stream с указанного адреса
+                //Получение Stream с указанного адреса
                 Stream stream = await client.GetStreamAsync(RssFeed_Url);
 
+                //Создание XmlReader на основе полученного Stream
                 XmlReader FeedReader = XmlReader.Create(stream);
 
-                // Загружаем RSS
+                // Загрузка RSS
                 SyndicationFeed Channel = SyndicationFeed.Load(FeedReader);
 
-                // если загрузились
+                // Если загрузка прошла успешно
                 if (Channel != null)
                 {
-                    // обрабатываем каждую новость канала
+                    // Обработка всех новостей канала
                     foreach (SyndicationItem RSI in Channel.Items)
                     {
-                        DateTimeOffset PublishTime_ForClient;
 
-                        //Получаем смещение в текущем часовом поясе
+                        DateTimeOffset PublishTime_ForClient;
+                        //Получение смещения в текущем часовом поясе (для текущей клиентской машины)
                         TimeSpan clientOffset = TimeZoneInfo.Local.GetUtcOffset(DateTimeOffset.Now);
 
+                        //Приведение времени ко времени используемому на клиентской машине
                         try
                         {
                             DateTimeOffset PublishTime_RSS = RSI.PublishDate;
@@ -70,14 +80,15 @@ namespace RSS_Fider.Rss
                         catch (FormatException)
                         {
                             PublishTime_ForClient = DateTimeOffset.MinValue;
-
                         }
 
+                        //Добавление элемента Rss в список
                         Rss_Items.Add(new RssItem(RSI.Title.Text, RSI.Id, RSI.Summary.Text, PublishTime_ForClient.DateTime.ToString()));
                     }
                 }
             }
 
+            //Возврат полученного списка Rss-элементов
             return Rss_Items;
         }
 

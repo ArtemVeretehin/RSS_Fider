@@ -53,12 +53,12 @@
                     var results = $('#result_text'); // получаем нужный элемент
 
                     results.empty(); //очищаем элемент
-
+ 
                     for (var i = 0; i < data.length; i++) 
                     {
                         // добавляем данные в список
-                        results.append('<div style="border-bottom: 1px solid black;"><h2><a href=' + data[i].link +
-                            'target="_blank">' + data[i].title + '</a></h2><div class="space" id="description' + i + '">' +
+                        results.append('<div style="border-bottom: 1px solid black;"><h2><a href="' + data[i].link +
+                            '" target="_blank">' + data[i].title + '</a></h2><div class="space" id="description' + i + '">' +
                             '</div><p>Дата добавления: <b>' + data[i].publishDate + '</b></p></div>');
 
 
@@ -72,8 +72,8 @@
                         }
 
                         //Убираем сообщение об обновлении данных
-                        var update_status = $("#update_status");
-                        update_status.empty();
+                        //var update_status = $("#update_status");
+                        //update_status.empty();
                     }
 
                     timerId = setTimeout(getInfo, @configuration["UpdateTime:Value"] * 1000); // (*)

@@ -14,11 +14,11 @@
 		</Feeds_States>
 	</Feeds>
 
-	<ProxySettings>
+	<ProxyConfiguration>
 		<Address>94.158.189.78:50207</Address>
 		<Login>8fu9jxas</Login>
 		<Password>bxnbWr4V</Password>
-	</ProxySettings>
+	</ProxyConfiguration>
 </configuration>
 
 
