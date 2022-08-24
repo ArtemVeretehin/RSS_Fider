@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
+	<MinUpdateTime Value ="10" />
 	<UpdateTime Value ="200" />
 	<DescriptionFormating Enable ="true"/>
 	
@@ -7,10 +8,18 @@
 		<Feeds_Addresses>
 			<Url name="0">http://www.pobeda-aksay.ru/feed/</Url>
 			<Url name="1">https://habr.com/rss/interesting/</Url>
+			<Url name="2">https://habr.com/rss/interesting/</Url>
+			<Url name="3">https://habr.com/rss/interesting/</Url>
+			<Url name="4">https://habr.com/rss/interesting/</Url>
+			<Url name="5">https://habr.com/rss/interesting/</Url>
 		</Feeds_Addresses>
 		<Feeds_States>
 			<Enable name="0">true</Enable>
 			<Enable name="1">true</Enable>
+			<Enable name="2">false</Enable>
+			<Enable name="3">false</Enable>
+			<Enable name="4">false</Enable>
+			<Enable name="5">false</Enable>
 		</Feeds_States>
 	</Feeds>
 

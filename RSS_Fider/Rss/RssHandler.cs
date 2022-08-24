@@ -1,6 +1,5 @@
 ﻿using RSS_Fider.Models;
 using System.Xml;
-using System.Xml.Linq;
 using System.Net;
 using System.ServiceModel.Syndication;
 using RSS_Fider.Proxy;

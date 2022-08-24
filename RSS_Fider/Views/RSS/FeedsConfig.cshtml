@@ -71,20 +71,29 @@
 
 
     <script>
+
         function ChangeFeedState(FeedId) {
             $.post("/RSS/RssChangeFeedState", { FeedId: FeedId })
                 .done(function(data) {
+                location.reload();
                 });
-            location.reload();
+            
         }
 
 
         function ChangeFeedUrl(FeedId) {
             var val = document.getElementById(`UrlInputId${FeedId}`).value;
+            var pattern = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi
+            if (!pattern.test(val))
+            {
+                alert(`Введите правильный URL!`);
+                return
+            }
             $.post("/RSS/RssChangeFeedUrl", { FeedId: FeedId, newUrl: val })
                 .done(function(data) {
+                location.reload()
                 });
-            location.reload();
+            ;
         }
 
 
@@ -98,6 +107,11 @@
 
         function ChangeUpdateInterval() {
             var val = document.getElementById('elem1').value;
+            if (val < @configuration["MinUpdateTime:Value"])
+            {
+                alert(`Минимальное время обновления ленты - ${@configuration["MinUpdateTime:Value"]} секунд`);
+                return
+            }
             $.post("/RSS/RssChangeUpdateTime", { param: val })
                 .done(function(data) {
                 });

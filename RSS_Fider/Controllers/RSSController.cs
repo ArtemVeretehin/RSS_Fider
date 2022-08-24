@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RSS_Fider.Rss;
-using System.Net;
 using RSS_Fider.Models;
 
 namespace RSS_Fider.Controllers
