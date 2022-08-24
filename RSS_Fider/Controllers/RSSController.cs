@@ -7,21 +7,6 @@ namespace RSS_Fider.Controllers
 {
     public class RSSController : Controller
     {
-        //Получение представления
-        public IActionResult RssStart()
-        {
-            /*
-            string? RssFeed_URL = RssHandler.GetUrl();
-
-            if (RssFeed_URL is not null)
-            {
-                ViewBag.ListItems = RssHandler.GetRssContent(RssFeed_URL);
-            }
-            */
-            return View();
-        }
-
-
         //Метод для обновления содержимого страницы, недоступен для пользователя
         [HttpPost]
         public async Task<JsonResult> RssIndex([FromServices] IConfiguration configuration)
@@ -32,7 +17,7 @@ namespace RSS_Fider.Controllers
 
             if (RssFeed_Urls?.Count > 0)
             {
-                list = await RssHandler.GetRssContentHttpClient(configuration, RssFeed_Urls);             
+                list = await RssHandler.GetRssContentHttpClient(configuration, RssFeed_Urls);
             }
             list.Sort((b1, b2) => string.Compare(b2.PublishDate, b1.PublishDate));
             JsonResult obj = Json(list);
@@ -75,7 +60,7 @@ namespace RSS_Fider.Controllers
         }
 
         [HttpPost]
-        public void RssChangeFeedUrl([FromServices] IConfiguration configuration, string FeedId,string newUrl)
+        public void RssChangeFeedUrl([FromServices] IConfiguration configuration, string FeedId, string newUrl)
         {
             configuration[$"Feeds:Feeds_Addresses:Url:{FeedId}"] = newUrl;
         }

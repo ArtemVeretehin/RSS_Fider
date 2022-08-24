@@ -13,8 +13,8 @@ namespace RSS_Fider.Rss
         {
             List<string> RssFeed_Urls = new List<string>();
             FeedsConfiguration feedsConfiguration = configuration.GetSection("Feeds").Get<FeedsConfiguration>();
-            
-            for (int i=0;i<feedsConfiguration.Feeds_Addresses.Url.Count;i++)
+
+            for (int i = 0; i < feedsConfiguration.Feeds_Addresses.Url.Count; i++)
             {
                 if (feedsConfiguration.Feeds_States.Enable[i] == "true") RssFeed_Urls.Add(feedsConfiguration.Feeds_Addresses.Url[i]);
             }
@@ -22,7 +22,6 @@ namespace RSS_Fider.Rss
 
             return RssFeed_Urls;
         }
-
 
 
         public static async Task<List<RssItem>> GetRssContentHttpClient(IConfiguration configuration, List<string> RssFeed_Urls)
@@ -45,7 +44,7 @@ namespace RSS_Fider.Rss
             foreach (string RssFeed_Url in RssFeed_Urls)
             {
                 //Получаем Stream с указанного адреса
-                Stream stream = await client.GetStreamAsync(RssFeed_Url);             
+                Stream stream = await client.GetStreamAsync(RssFeed_Url);
 
                 XmlReader FeedReader = XmlReader.Create(stream);
 
@@ -78,15 +77,9 @@ namespace RSS_Fider.Rss
                     }
                 }
             }
-      
+
             return Rss_Items;
         }
 
-
-
-
-
-
-      
     }
 }
