@@ -10,30 +10,35 @@ namespace RSS_Fider.Controllers
         //Получение представления
         public IActionResult RssStart()
         {
+            /*
             string? RssFeed_URL = RssHandler.GetUrl();
 
             if (RssFeed_URL is not null)
             {
                 ViewBag.ListItems = RssHandler.GetRssContent(RssFeed_URL);
             }
+            */
             return View();
         }
+
 
         //Метод для обновления содержимого страницы, недоступен для пользователя
         [HttpPost]
         public async Task<JsonResult> RssIndex([FromServices] IConfiguration configuration)
         {
-            string? RssFeed_URL = RssHandler.GetUrl();
-            List<Models.RssItem> list = new List<Models.RssItem>();
+            List<string>? RssFeed_Urls = RssHandler.GetListOfUrls(configuration);
 
-            if (RssFeed_URL is not null)
+            List<RssItem> list = new List<RssItem>();
+
+            if (RssFeed_Urls?.Count > 0)
             {
-                list = await RssHandler.GetRssContentHttpClient(configuration,RssFeed_URL);
-                //list = RssHandler.GetRssContent(RssFeed_URL);
+                list = await RssHandler.GetRssContentHttpClient(configuration, RssFeed_Urls);             
             }
+            list.Sort((b1, b2) => string.Compare(b2.PublishDate, b1.PublishDate));
             JsonResult obj = Json(list);
             return Json(list);
         }
+
 
         //Получение представления
         public IActionResult RssRefresh([FromServices] IConfiguration configuration)

@@ -1,15 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-	<FeedUrl>
-		<FeedUrl_1>http://www.pobeda-aksay.ru/feed/</FeedUrl_1>
-		<FeedUrl_2>https://habr.com/rss/interesting/</FeedUrl_2>
-	</FeedUrl>
-	<FeedEnable>
-		<FeedEnable_1>http://www.pobeda-aksay.ru/feed/</FeedEnable_1>
-		<FeedEnable_2>https://habr.com/rss/interesting/</FeedEnable_2>
-	</FeedEnable>
-
-
+	<UpdateTime Value ="200" />
+	<DescriptionFormating Enable ="true"/>
+	
 	<Feeds>
 		<Feeds_Addresses>
 			<Url name="0">http://www.pobeda-aksay.ru/feed/</Url>
@@ -17,14 +10,12 @@
 		</Feeds_Addresses>
 		<Feeds_States>
 			<Enable name="0">true</Enable>
-			<Enable name="1">false</Enable>
+			<Enable name="1">true</Enable>
 		</Feeds_States>
 	</Feeds>
 
-
-	<UpdateTime Value ="30" />
-	<DescriptionFormating Enable ="true"/>
-	<ProxySettings Address ="94.158.189.78:50207">
+	<ProxySettings>
+		<Address>94.158.189.78:50207</Address>
 		<Login>8fu9jxas</Login>
 		<Password>bxnbWr4V</Password>
 	</ProxySettings>
