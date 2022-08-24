@@ -18,7 +18,7 @@
     @inject IConfiguration configuration;
 
     <h1>Параметры RSS-фидера</h1>
-    <br />
+    <h5>Период обновления ленты: @configuration["UpdateTime:Value"] секунд</h5>
 
     @*В зависимости от настройки конфигурации определяем должен ли checkbox быть в состоянии checked*@
     @if (configuration["DescriptionFormating:Enable"] == "true")
@@ -31,9 +31,8 @@
     }
 
     <p>
-
         @*Лэйбл, поле ввода и кнопка для изменения - интерфейс для изменения частоты обновления ленты*@
-        <label for="UpdateTime" class="form-label">Частота обновления ленты:</label>
+        <label for="UpdateTime" class="form-label">Частота обновления ленты, секунд:</label>
         <input id="elem1" type="text" placeholder="Введите новое значение" name="UpdateTime" />
         <input id="butt" type="button" value="Подтвердить" onclick="ChangeUpdateInterval()" />
     </p>
@@ -118,8 +117,9 @@
         function ChangeFormat() {
             $.post("/RSS/RssFormat")
                 .done(function(data) {
+                    location.reload();
                 });
-            location.reload();
+            
         }
 
         //Функция отправки запроса на изменения периода обновления ленты
@@ -141,8 +141,9 @@
 
             $.post("/RSS/RssChangeUpdateTime", { param: val })
                 .done(function(data) {
+                    location.reload()
                 });
-            location.reload();
+            ;
         }
 
 

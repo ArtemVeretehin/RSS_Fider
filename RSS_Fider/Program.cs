@@ -6,6 +6,8 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+app.UseStatusCodePages();
+
 builder.Configuration.AddXmlFile("config.xml",optional:false,reloadOnChange:true);
 
 // Configure the HTTP request pipeline.
@@ -23,7 +25,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
 
 
 app.MapControllerRoute(

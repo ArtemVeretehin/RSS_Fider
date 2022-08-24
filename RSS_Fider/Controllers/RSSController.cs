@@ -12,14 +12,23 @@ namespace RSS_Fider.Controllers
         {
             //Список-контейнер для элементов Rss-ленты
             List<RssItem> list = new List<RssItem>();
+
             //Список-контейнер для адресов включенных пользователем Rss-лент
             List<string>? RssFeed_Urls = RssHandler.GetListOfUrls(configuration);
             
             //Получение элементов Rss-ленты
             if (RssFeed_Urls?.Count > 0)
             {
-                list = await RssHandler.GetRssContentHttpClient(configuration, RssFeed_Urls);
+                try
+                { 
+                    list = await RssHandler.GetRssContentHttpClient(configuration, RssFeed_Urls);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Возникло исключение: {ex.Message}");
+                }
             }
+
             //Сортировка элементов Rss-ленты по дате добавления
             list.Sort((b1, b2) => string.Compare(b2.PublishDate, b1.PublishDate));
 
@@ -57,6 +66,8 @@ namespace RSS_Fider.Controllers
                 case "true":
                     configuration["DescriptionFormating:Enable"] = "false";
                     break;
+                default:
+                    break;
             }
         }
 
@@ -74,6 +85,8 @@ namespace RSS_Fider.Controllers
                     break;
                 case "true":
                     configuration[$"Feeds:Feeds_States:Enable:{FeedId}"] = "false";
+                    break;
+                default:
                     break;
             }
         }

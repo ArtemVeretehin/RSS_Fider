@@ -12,7 +12,7 @@ namespace RSS_Fider.Rss
         {
             //Список-контейнер для адресов включенных пользователем Rss-лент
             List<string> RssFeed_Urls = new List<string>();
-            
+
             //Привязка конфигурации к объекту FeedsConfiguration (Только секцию с настройками лент)
             FeedsConfiguration feedsConfiguration = configuration.GetSection("Feeds").Get<FeedsConfiguration>();
 
@@ -32,8 +32,8 @@ namespace RSS_Fider.Rss
             ProxyConfiguration proxyConfiguration = configuration.GetSection("ProxyConfiguration").Get<ProxyConfiguration>();
 
             //Определение параметров для прокси: данные покдлючения (IP,порт), учетные данные(логин, пароль)
-            WebProxy proxy = new WebProxy(proxyConfiguration.Address, false);                                    //Правильный адрес - "94.158.189.78:50207
-            proxy.Credentials = new NetworkCredential(proxyConfiguration.Login, proxyConfiguration.Password);    //Правильные логин/пароль "8fu9jxas", "bxnbWr4V"
+            WebProxy proxy = new WebProxy(proxyConfiguration.Address, false);                                    
+            proxy.Credentials = new NetworkCredential(proxyConfiguration.Login, proxyConfiguration.Password);    
 
             //Создание обработчика HttpCLientHandler для HttpClient и передача ему данных о ранее сконфигурированном WebProxy
             HttpClientHandler httpClientHandler = new HttpClientHandler
@@ -50,8 +50,11 @@ namespace RSS_Fider.Rss
             //Для каждой включенной ленты
             foreach (string RssFeed_Url in RssFeed_Urls)
             {
+
                 //Получение Stream с указанного адреса
                 Stream stream = await client.GetStreamAsync(RssFeed_Url);
+     
+
 
                 //Создание XmlReader на основе полученного Stream
                 XmlReader FeedReader = XmlReader.Create(stream);
@@ -82,10 +85,11 @@ namespace RSS_Fider.Rss
                         }
 
                         //Добавление элемента Rss в список
-                        Rss_Items.Add(new RssItem(RSI.Title.Text, RSI.Id, RSI.Summary.Text, PublishTime_ForClient.DateTime.ToString()));
+                        Rss_Items.Add(new RssItem(RSI.Title.Text, RSI.Links[0].Uri.ToString(), RSI.Summary.Text, PublishTime_ForClient.DateTime.ToString()));
                     }
                 }
             }
+
 
             //Возврат полученного списка Rss-элементов
             return Rss_Items;
