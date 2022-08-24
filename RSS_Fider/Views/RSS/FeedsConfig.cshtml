@@ -1,7 +1,7 @@
 ﻿@model FeedsConfiguration
 
 @{
-    Layout = null;
+    Layout = "/Views/RSS/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
@@ -14,37 +14,60 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
-    @inject IConfiguration configuration;
+    
+@inject IConfiguration configuration;
 
-    <h2>Список пользователей</h2>
+    <h1>Параметры RSS-фидера</h1>
+
+    @*Добавляю то что было в Refresh*@
+
+    @if (configuration["DescriptionFormating:Enable"] == "true")
+    {
+        <p><input type="checkbox" name="FormatingState" checked onclick="ChangeFormat()"> <label for="FormatingState">Включить форматирование</label></p>
+    }
+    else
+    {
+        <p><input type="checkbox" name="FormatingState" onclick="ChangeFormat()"> <label for="FormatingState">Включить форматирование</label></p>
+    }
+
+    <label for="UpdateTime" class="form-label">Частота обновления ленты:</label>
+    <input id="elem1" type="text" placeholder="Введите новое значение" name="UpdateTime" />
+    <input id="butt" type="button" value="Подтвердить новое значение" onclick="ChangeUpdateInterval()" />
+    @*Конец блока*@
     
     <table class="table table-condensed table-striped table-bordered">
-        <thead><tr><th>Адрес ленты</th><th>Вкл/выкл</th><th>Новый адрес</th></tr></thead>
+        <thead>
+            <tr>
+                <th>Адрес ленты</th>
+                <th>Состояние ленты</th>
+                <th>Управление лентой</th>
+                <th>Изменение адреса ленты</th>
+            </tr>
+        </thead>
+        
         <tbody>
         
         @for (int i = 0;i < Model.Feeds_Addresses.Url.Count; i++)
         {
+                string FeedState = (Model.Feeds_States.Enable[i] == "true") ? "Включена" : "Выключена";
                 string EnableButtonTitle = (Model.Feeds_States.Enable[i] == "true") ? "Выключить ленту" : "Включить ленту";
                 string EnableButtonId = $"EnableButton{i}";
                 string UrlInputId = $"UrlInputId{i}";
                 string ChangeButtonId = $"ChangeButton{i}";
                 <tr>
                     <td>@Model.Feeds_Addresses.Url[i]</td>
+                    <td>@FeedState</td>
                     <td>
                         <input id=@EnableButtonId type="button" value=@EnableButtonTitle onclick="ChangeFeedState(@i)" />
                     </td>
                     <td>
                         <input id=@UrlInputId type="text" name="UpdateTime" />
                         <input id=@ChangeButtonId type="button" value="Изменить" onclick="ChangeFeedUrl(@i)" />
-
                     </td>
                 </tr>
         }
-
-    
         </tbody>
     </table>
-
 
 
     <script>
@@ -54,23 +77,32 @@
                 });
         }
 
+
         function ChangeFeedUrl(FeedId) {
-
             var val = document.getElementById(`UrlInputId${FeedId}`).value;
-
             $.post("/RSS/RssChangeFeedUrl", { FeedId: FeedId, newUrl: val })
                 .done(function(data) {
                 });
         }
-    </script>
 
 
+        function ChangeFormat() {
+            $.post("/RSS/RssFormat")
+                .done(function(data) {
+                });
+            location.reload();
+        }
 
 
+        function ChangeUpdateInterval() {
+            var val = document.getElementById('elem1').value;
+            $.post("/RSS/RssChangeUpdateTime", { param: val })
+                .done(function(data) {
+                });
+            location.reload();
+        }
 
 
-
-
-    
+    </script>   
 </body>
 </html>
