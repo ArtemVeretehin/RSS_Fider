@@ -35,6 +35,7 @@
 </head>
 
 <body>
+    @*Пробрасываем конфигурацию в представление*@
     @inject IConfiguration configuration
 
     <h3>Период обновления ленты: @configuration["UpdateTime:Value"] секунд</h3>
@@ -44,59 +45,50 @@
 
 
     <script>
+        
+        //Запуск обновления ленты. Таймаут равен 0, обновление запускается сразу
         let timerId = setTimeout(function getInfo() {
+
+            //Оповещение о начале обновления
             $("#update_status").text("Идет обновление ленты");
 
+            //Отправка запроса к контроллеру RSS, метод RssIndex. Ожидаемый ответ - список RSS-элементов в JSON-формате
             $.post("/RSS/RssIndex")
                 .done(function(data) {
-                    var count = data.length;
-                    var results = $('#result_text'); // получаем нужный элемент
-
-                    results.empty(); //очищаем элемент
- 
-                    for (var i = 0; i < data.length; i++) 
+                    
+                    //Получаем блок DIV, хранящий новости в ленте и очищаем его содержимое
+                    let results = $('#result_text'); 
+                    results.empty(); 
+                    
+                    //Для каждого RSS-элемента
+                    for (let i = 0; i < data.length; i++) 
                     {
-                        // добавляем данные в список
+                        //Формируем блок текущего RSS-элемента. Блок DIV для описания создается без контента
                         results.append('<div style="border-bottom: 1px solid black;"><h2><a href="' + data[i].link +
                             '" target="_blank">' + data[i].title + '</a></h2><div class="space" id="description' + i + '">' +
                             '</div><p>Дата добавления: <b>' + data[i].publishDate + '</b></p></div>');
 
-
+                        //Проверка настроек формата описания. В зависимости от текущей происходит выбор text/html
                         if (@configuration["DescriptionFormating:Enable"] === true) 
                         {
+                            //Вывод описания с форматированием по тегам
                             $("#description" + i).html(data[i].description);
                         }
                         else 
                         {
+                            //Вывод описания без форматирования
                             $("#description" + i).text(data[i].description);
                         }
 
-                        //Убираем сообщение об обновлении данных
-                        //var update_status = $("#update_status");
-                        //update_status.empty();
+                        //Выключение оповещения об обновлении
+                        let update_status = $("#update_status");
+                        update_status.empty();
                     }
-
-                    timerId = setTimeout(getInfo, @configuration["UpdateTime:Value"] * 1000); // (*)
+                    
+                    //По завершении текущего обновления запускается таймер на следующее обновление
+                    timerId = setTimeout(getInfo, @configuration["UpdateTime:Value"] * 1000);
                 });
         }, 0);
-
-
-
-        function ChangeFormat() {
-            $.post("/RSS/RssFormat")
-                .done(function(data) {
-                });
-            location.reload();
-        }
-
-
-        function ChangeUpdateInterval() {
-            var val = document.getElementById('elem1').value;
-            $.post("/RSS/RssChangeUpdateTime", { param: val })
-                .done(function(data) {
-                });
-            location.reload();
-        }
 
     </script>
 

@@ -14,13 +14,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
-
+    @*Пробрасываем конфигурацию в представление*@
     @inject IConfiguration configuration;
 
     <h1>Параметры RSS-фидера</h1>
+    <br />
 
-    @*Добавляю то что было в Refresh*@
-
+    @*В зависимости от настройки конфигурации определяем должен ли checkbox быть в состоянии checked*@
     @if (configuration["DescriptionFormating:Enable"] == "true")
     {
         <p><input type="checkbox" name="FormatingState" checked onclick="ChangeFormat()"> <label for="FormatingState">Включить форматирование</label></p>
@@ -30,11 +30,15 @@
         <p><input type="checkbox" name="FormatingState" onclick="ChangeFormat()"> <label for="FormatingState">Включить форматирование</label></p>
     }
 
-    <label for="UpdateTime" class="form-label">Частота обновления ленты:</label>
-    <input id="elem1" type="text" placeholder="Введите новое значение" name="UpdateTime" />
-    <input id="butt" type="button" value="Подтвердить новое значение" onclick="ChangeUpdateInterval()" />
-    @*Конец блока*@
+    <p>
 
+        @*Лэйбл, поле ввода и кнопка для изменения - интерфейс для изменения частоты обновления ленты*@
+        <label for="UpdateTime" class="form-label">Частота обновления ленты:</label>
+        <input id="elem1" type="text" placeholder="Введите новое значение" name="UpdateTime" />
+        <input id="butt" type="button" value="Подтвердить" onclick="ChangeUpdateInterval()" />
+    </p>
+
+    @*Блок формирования таблицы - элемента для управления лентами*@
     <table class="table table-condensed table-striped table-bordered">
         <thead>
             <tr>
@@ -46,14 +50,26 @@
         </thead>
 
         <tbody>
-
+            @*Для каждого адреса в конфигурации формируется своя блок-строка управления: адрес ленты, состояние (вкл/выкл), кнопка изменения состояния, поле и кнопка для изменения адреса ленты*@
             @for (int i = 0; i < Model.Feeds_Addresses.Url.Count; i++)
             {
+                //Определение состояния ленты
                 string FeedState = (Model.Feeds_States.Enable[i] == "true") ? "Включена" : "Выключена";
+
+                //Определение текста на кнопке
                 string EnableButtonTitle = (Model.Feeds_States.Enable[i] == "true") ? "Выключить ленту" : "Включить ленту";
+
+                //Формирование Id для кнопки включения/выключения
                 string EnableButtonId = $"EnableButton{i}";
+
+                //Формирование Id для окна ввода адреса ленты
                 string UrlInputId = $"UrlInputId{i}";
+
+                //Формирование Id для кнопки изменения адреса
                 string ChangeButtonId = $"ChangeButton{i}";
+
+                @*Формирование блока управления лентой*@
+
                 <tr>
                     <td>@Model.Feeds_Addresses.Url[i]</td>
                     <td>@FeedState</td>
@@ -72,31 +88,33 @@
 
     <script>
 
+        //Функция отправки запроса на изменение состояния ленты
         function ChangeFeedState(FeedId) {
             $.post("/RSS/RssChangeFeedState", { FeedId: FeedId })
                 .done(function(data) {
-                location.reload();
+                    location.reload();
                 });
-            
+
         }
 
-
+        //Функция отправки запроса на изменения адреса ленты
         function ChangeFeedUrl(FeedId) {
-            var val = document.getElementById(`UrlInputId${FeedId}`).value;
-            var pattern = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi
-            if (!pattern.test(val))
-            {
+            let val = document.getElementById(`UrlInputId${FeedId}`).value;
+
+            //Проверка введенного значения на соответствие шаблону Url
+            let pattern = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi
+            if (!pattern.test(val)) {
                 alert(`Введите правильный URL!`);
                 return
             }
             $.post("/RSS/RssChangeFeedUrl", { FeedId: FeedId, newUrl: val })
                 .done(function(data) {
-                location.reload()
+                    location.reload()
                 });
             ;
         }
 
-
+        //Функция отправки запроса на изменение формата вывода описания (с форматированием/без форматирования по тегам)
         function ChangeFormat() {
             $.post("/RSS/RssFormat")
                 .done(function(data) {
@@ -104,14 +122,23 @@
             location.reload();
         }
 
-
+        //Функция отправки запроса на изменения периода обновления ленты
         function ChangeUpdateInterval() {
-            var val = document.getElementById('elem1').value;
-            if (val < @configuration["MinUpdateTime:Value"])
-            {
+            let val = document.getElementById('elem1').value;
+
+            //Проверка, является ли введенное значение целым числом
+            let pattern = /^[1-9]\d*$/
+            if (!pattern.test(val)) {
+                alert("Введите целое число, не начинающееся с 0!");
+                return
+            }
+
+            //Проверка, что значение не меньше чем сконфигурированное значение минимального обновления ленты
+            if (val < @configuration["MinUpdateTime:Value"]) {
                 alert(`Минимальное время обновления ленты - ${@configuration["MinUpdateTime:Value"]} секунд`);
                 return
             }
+
             $.post("/RSS/RssChangeUpdateTime", { param: val })
                 .done(function(data) {
                 });

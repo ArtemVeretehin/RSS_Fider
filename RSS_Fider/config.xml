@@ -8,10 +8,10 @@
 		<Feeds_Addresses>
 			<Url name="0">http://www.pobeda-aksay.ru/feed/</Url>
 			<Url name="1">https://habr.com/rss/interesting/</Url>
-			<Url name="2">https://habr.com/rss/interesting/</Url>
-			<Url name="3">https://habr.com/rss/interesting/</Url>
-			<Url name="4">https://habr.com/rss/interesting/</Url>
-			<Url name="5">https://habr.com/rss/interesting/</Url>
+			<Url name="2">https://hi-news.ru/feed</Url>
+			<Url name="3">https://news.rambler.ru/rss/Russia/?limit=100</Url>
+			<Url name="4">https://cubiq.ru/news/feed/</Url>
+			<Url name="5">https://www.adme.ru/rss/</Url>
 		</Feeds_Addresses>
 		<Feeds_States>
 			<Enable name="0">true</Enable>
