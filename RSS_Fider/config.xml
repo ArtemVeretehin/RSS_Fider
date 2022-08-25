@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-	<MinUpdateTime>ass</MinUpdateTime>
+	<MinUpdateTime>10</MinUpdateTime>
 	<UpdateTime>200</UpdateTime>
 	<DescriptionFormating>true</DescriptionFormating>
 	
