@@ -79,7 +79,7 @@ namespace RSS_Fider.Controllers
                 return View("Error");
             }
 
-            return View();
+            return View(config);
         }
 
 
