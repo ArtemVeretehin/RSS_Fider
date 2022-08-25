@@ -51,7 +51,10 @@ namespace RSS_Fider.Controllers
 
             if (! results.IsValid)
             {
-                Console.WriteLine("NotValid");
+                Console.WriteLine("Параметры заданные в конфигурации не валидны.");
+                Console.WriteLine("Проверьте настройки в файле конфигурации. Минимальное и текущее время обновления (MinUpdateTime,UpdateTime) должны быть указаны в формате целого числа, больше 0. " +
+                    "Настройка параметра форматирования(DescriptionFormating) должна быть указана в формате true / false.");
+                return View("Error");
             }
             return PartialView();
         }
@@ -63,7 +66,20 @@ namespace RSS_Fider.Controllers
             //FeedsConfiguration feedsConfiguration = configuration.GetSection("Feeds").Get<FeedsConfiguration>();
             Config config = new Config();
             configuration.Bind(config);
-            return View(config);
+
+            ConfigValidator validator = new ConfigValidator();
+
+            ValidationResult results = validator.Validate(config);
+
+            if (!results.IsValid)
+            {
+                Console.WriteLine("Параметры заданные в конфигурации не валидны.");
+                Console.WriteLine("Проверьте настройки в файле конфигурации. Минимальное и текущее время обновления (MinUpdateTime,UpdateTime) должны быть указаны в формате целого числа, больше 0. " +
+                    "Настройка параметра форматирования(DescriptionFormating) должна быть указана в формате true / false.");
+                return View("Error");
+            }
+
+            return View();
         }
 
 

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-	<MinUpdateTime>10</MinUpdateTime>
+	<MinUpdateTime>ass</MinUpdateTime>
 	<UpdateTime>200</UpdateTime>
 	<DescriptionFormating>true</DescriptionFormating>
 	
@@ -24,7 +24,7 @@
 	</Feeds>
 
 	<ProxyConfiguration>
-		<Address></Address>
+		<Address>94.158.189.78:50207</Address>
 		<Login>8fu9jxas</Login>
 		<Password>bxnbWr4V</Password>
 	</ProxyConfiguration>
