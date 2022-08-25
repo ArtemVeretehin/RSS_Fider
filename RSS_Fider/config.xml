@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-	<MinUpdateTime Value ="10" />
-	<UpdateTime Value ="200" />
-	<DescriptionFormating Enable ="true"/>
+	<MinUpdateTime>10</MinUpdateTime>
+	<UpdateTime>200</UpdateTime>
+	<DescriptionFormating>true</DescriptionFormating>
 	
 	<Feeds>
 		<Feeds_Addresses>
@@ -24,7 +24,7 @@
 	</Feeds>
 
 	<ProxyConfiguration>
-		<Address>94.158.189.78:50207</Address>
+		<Address></Address>
 		<Login>8fu9jxas</Login>
 		<Password>bxnbWr4V</Password>
 	</ProxyConfiguration>
@@ -36,4 +36,4 @@
 
 <!--В файле настроек хранится:
   В обязательном порядке должны быть указаны значения для минимального, текущего времени обновления (MminUpdateTime,UpdateTime) и для настройки форматирования (DescriptionFormating) 
-адрес и учётные данные для подключения.-->
+адрес и учётные данные для подключения.Можно добавить в контроллерные методы проверку и в случае чего возвращать ErrorPage-->

@@ -71,7 +71,7 @@
                             '</div><p>Дата добавления: <b>' + data[i].publishDate + '</b></p></div>');
 
                         //Проверка настроек формата описания. В зависимости от текущей происходит выбор text/html
-                        if (@configuration["DescriptionFormating:Enable"] === true) 
+                        if (@configuration["DescriptionFormating"] === true) 
                         {
                             //Вывод описания с форматированием по тегам
                             $("#description" + i).html(data[i].description);
@@ -87,7 +87,7 @@
                     update_status.empty();
 
                     //По завершении текущего обновления запускается таймер на следующее обновление
-                    timerId = setTimeout(getInfo, @configuration["UpdateTime:Value"] * 1000);
+                    timerId = setTimeout(getInfo, @configuration["UpdateTime"] * 1000);
                 });
         }, 0);
 

@@ -2,7 +2,7 @@
 using System.Xml;
 using System.Net;
 using System.ServiceModel.Syndication;
-using RSS_Fider.Proxy;
+using RSS_Fider.Configuration;
 
 namespace RSS_Fider.Rss
 {
@@ -14,12 +14,15 @@ namespace RSS_Fider.Rss
             List<string> RssFeed_Urls = new List<string>();
 
             //Привязка конфигурации к объекту FeedsConfiguration (Только секцию с настройками лент)
-            FeedsConfiguration feedsConfiguration = configuration.GetSection("Feeds").Get<FeedsConfiguration>();
+            //FeedsConfiguration feedsConfiguration = configuration.GetSection("Feeds").Get<FeedsConfiguration>();
+
+            Config config = new Config();
+            configuration.Bind(config);
 
             //Проверка состояния ленты. Если лента включена - нужно добавить ее адрес в список опроса
-            for (int i = 0; i < feedsConfiguration.Feeds_Addresses.Url.Count; i++)
+            for (int i = 0; i < config.Feeds.Feeds_Addresses.Url.Count; i++)
             {
-                if (feedsConfiguration.Feeds_States.Enable[i] == "true") RssFeed_Urls.Add(feedsConfiguration.Feeds_Addresses.Url[i]);
+                if (config.Feeds.Feeds_States.Enable[i] == "true") RssFeed_Urls.Add(config.Feeds.Feeds_Addresses.Url[i]);
             }
 
             return RssFeed_Urls;
@@ -28,21 +31,40 @@ namespace RSS_Fider.Rss
 
         public static async Task<List<RssItem>> GetRssContentHttpClient(IConfiguration configuration, List<string> RssFeed_Urls)
         {
+            WebProxy proxy;
+            HttpClientHandler httpClientHandler;
+            HttpClient client;
+
             //Привязка конфигурации к объекту ProxySettings (Только секцию с настройками прокси)
-            ProxyConfiguration proxyConfiguration = configuration.GetSection("ProxyConfiguration").Get<ProxyConfiguration>();
 
-            //Определение параметров для прокси: данные покдлючения (IP,порт), учетные данные(логин, пароль)
-            WebProxy proxy = new WebProxy(proxyConfiguration.Address, false);                                    
-            proxy.Credentials = new NetworkCredential(proxyConfiguration.Login, proxyConfiguration.Password);    
 
-            //Создание обработчика HttpCLientHandler для HttpClient и передача ему данных о ранее сконфигурированном WebProxy
-            HttpClientHandler httpClientHandler = new HttpClientHandler
+            Config config = new Config();
+            configuration.Bind(config);
+
+            //Если задан адрес для прокси, то осуществляется подключение по указанному адресу с заданными учетными данными
+            if (config.ProxyConfiguration.Address != "")
             {
-                Proxy = proxy,
-            };
+                //Определение параметров для прокси: данные покдлючения (IP,порт), учетные данные(логин, пароль)
+                proxy = new WebProxy(config.ProxyConfiguration.Address, false);
+                proxy.Credentials = new NetworkCredential(config.ProxyConfiguration.Login, config.ProxyConfiguration.Password);
 
-            //Создание клиента, привязка к нему обработчика и соответственно прокси
-            HttpClient client = new HttpClient(handler: httpClientHandler, disposeHandler: true);
+                //Создание обработчика HttpCLientHandler для HttpClient и передача ему данных о ранее сконфигурированном WebProxy
+                httpClientHandler = new HttpClientHandler
+                {
+                    Proxy = proxy,
+                };
+
+                //Создание клиента, привязка к нему обработчика и соответственно прокси
+                client = new HttpClient(handler: httpClientHandler, disposeHandler: true);
+            }
+            else
+            {
+                //Подключение без прокси
+                client = new HttpClient();
+            }
+
+
+
 
             //Список-контейнер для элементов Rss-ленты
             List<RssItem> Rss_Items = new List<RssItem>();
@@ -53,7 +75,7 @@ namespace RSS_Fider.Rss
 
                 //Получение Stream с указанного адреса
                 Stream stream = await client.GetStreamAsync(RssFeed_Url);
-     
+
 
 
                 //Создание XmlReader на основе полученного Stream

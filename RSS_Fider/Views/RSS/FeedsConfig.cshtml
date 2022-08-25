@@ -1,4 +1,6 @@
-﻿@model FeedsConfiguration
+﻿@using RSS_Fider.Configuration;
+
+@model Config
 
 @{
     Layout = "/Views/RSS/_Layout.cshtml";
@@ -18,10 +20,10 @@
     @inject IConfiguration configuration;
 
     <h1>Параметры RSS-фидера</h1>
-    <h5>Период обновления ленты: @configuration["UpdateTime:Value"] секунд</h5>
+    <h5>Период обновления ленты: @configuration["UpdateTime"] секунд</h5>
 
     @*В зависимости от настройки конфигурации определяем должен ли checkbox быть в состоянии checked*@
-    @if (configuration["DescriptionFormating:Enable"] == "true")
+    @if (configuration["DescriptionFormating"] == "true")
     {
         <p><input type="checkbox" name="FormatingState" checked onclick="ChangeFormat()"> <label for="FormatingState">Включить форматирование</label></p>
     }
@@ -50,13 +52,13 @@
 
         <tbody>
             @*Для каждого адреса в конфигурации формируется своя блок-строка управления: адрес ленты, состояние (вкл/выкл), кнопка изменения состояния, поле и кнопка для изменения адреса ленты*@
-            @for (int i = 0; i < Model.Feeds_Addresses.Url.Count; i++)
+            @for (int i = 0; i < Model.Feeds.Feeds_Addresses.Url.Count; i++)
             {
                 //Определение состояния ленты
-                string FeedState = (Model.Feeds_States.Enable[i] == "true") ? "Включена" : "Выключена";
+                string FeedState = (Model.Feeds.Feeds_States.Enable[i] == "true") ? "Включена" : "Выключена";
 
                 //Определение текста на кнопке
-                string EnableButtonTitle = (Model.Feeds_States.Enable[i] == "true") ? "Выключить ленту" : "Включить ленту";
+                string EnableButtonTitle = (Model.Feeds.Feeds_States.Enable[i] == "true") ? "Выключить ленту" : "Включить ленту";
 
                 //Формирование Id для кнопки включения/выключения
                 string EnableButtonId = $"EnableButton{i}";
@@ -70,7 +72,7 @@
                 @*Формирование блока управления лентой*@
 
                 <tr>
-                    <td>@Model.Feeds_Addresses.Url[i]</td>
+                    <td>@Model.Feeds.Feeds_Addresses.Url[i]</td>
                     <td>@FeedState</td>
                     <td>
                         <input id=@EnableButtonId type="button" value=@EnableButtonTitle onclick="ChangeFeedState(@i)" />
@@ -134,8 +136,8 @@
             }
 
             //Проверка, что значение не меньше чем сконфигурированное значение минимального обновления ленты
-            if (val < @configuration["MinUpdateTime:Value"]) {
-                alert(`Минимальное время обновления ленты - ${@configuration["MinUpdateTime:Value"]} секунд`);
+            if (val < @configuration["MinUpdateTime"]) {
+                alert(`Минимальное время обновления ленты - ${@configuration["MinUpdateTime"]} секунд`);
                 return
             }
 

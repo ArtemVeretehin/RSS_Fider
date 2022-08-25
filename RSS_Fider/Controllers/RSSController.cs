@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using FluentValidation.Results;
 using RSS_Fider.Rss;
 using RSS_Fider.Models;
+using RSS_Fider.Configuration;
 
 namespace RSS_Fider.Controllers
 {
@@ -40,6 +42,17 @@ namespace RSS_Fider.Controllers
         //Получение представления - основное окно, просмотр ленты
         public IActionResult RssRefresh([FromServices] IConfiguration configuration)
         {
+            Config config = new Config();
+            configuration.Bind(config);
+
+            ConfigValidator validator = new ConfigValidator();
+
+            ValidationResult results = validator.Validate(config);
+
+            if (! results.IsValid)
+            {
+                Console.WriteLine("NotValid");
+            }
             return PartialView();
         }
 
@@ -47,8 +60,10 @@ namespace RSS_Fider.Controllers
         //Получение представления - окно настроек ленты
         public IActionResult FeedsConfig([FromServices] IConfiguration configuration)
         {
-            FeedsConfiguration feedsConfiguration = configuration.GetSection("Feeds").Get<FeedsConfiguration>();
-            return View(feedsConfiguration);
+            //FeedsConfiguration feedsConfiguration = configuration.GetSection("Feeds").Get<FeedsConfiguration>();
+            Config config = new Config();
+            configuration.Bind(config);
+            return View(config);
         }
 
 
@@ -56,15 +71,15 @@ namespace RSS_Fider.Controllers
         [HttpPost]
         public void RssFormat([FromServices] IConfiguration configuration)
         {
-            string FormatState = configuration["DescriptionFormating:Enable"];
+            string FormatState = configuration["DescriptionFormating"];
 
             switch (FormatState)
             {
                 case "false":
-                    configuration["DescriptionFormating:Enable"] = "true";
+                    configuration["DescriptionFormating"] = "true";
                     break;
                 case "true":
-                    configuration["DescriptionFormating:Enable"] = "false";
+                    configuration["DescriptionFormating"] = "false";
                     break;
                 default:
                     break;
@@ -96,7 +111,7 @@ namespace RSS_Fider.Controllers
         [HttpPost]
         public void RssChangeUpdateTime([FromServices] IConfiguration configuration, string param)
         {
-            configuration["UpdateTime:Value"] = param;
+            configuration["UpdateTime"] = param;
         }
 
         
