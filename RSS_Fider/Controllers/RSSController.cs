@@ -56,7 +56,7 @@ namespace RSS_Fider.Controllers
                     "Настройка параметра форматирования(DescriptionFormating) должна быть указана в формате true / false.");
                 return View("Error");
             }
-            return PartialView();
+            return View();
         }
 
 

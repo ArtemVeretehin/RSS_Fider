@@ -27,9 +27,13 @@ app.UseRouting();
 app.UseAuthorization();
 
 
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Rss}/{action=RssRefresh}");
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Rss}/{action=RssRefresh}");
+    pattern: "{controller=Rss}/{action=FeedsConfig}");
 
 
 app.Run();
