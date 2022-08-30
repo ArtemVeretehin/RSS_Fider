@@ -2,6 +2,7 @@
 
 namespace RSS_Fider.Configuration
 {
+    //Ниже представлен полный класс конфигурации, на который производится проекция параметров из файла конфигурации,набор классов-элементов конфигурации, класс-валидатор
     public class Config
     {
         public string MinUpdateTime { get; set; }

@@ -42,13 +42,16 @@ namespace RSS_Fider.Controllers
         //Получение представления - основное окно, просмотр ленты
         public IActionResult RssRefresh([FromServices] IConfiguration configuration)
         {
+            //Создание класса конфигурации и проекция параметров на него
             Config config = new Config();
             configuration.Bind(config);
 
+            //Создание класса валидатора
             ConfigValidator validator = new ConfigValidator();
 
+            //Получение результатов валидации
             ValidationResult results = validator.Validate(config);
-
+            
             if (! results.IsValid)
             {
                 Console.WriteLine("Параметры заданные в конфигурации не валидны.");
@@ -63,12 +66,14 @@ namespace RSS_Fider.Controllers
         //Получение представления - окно настроек ленты
         public IActionResult FeedsConfig([FromServices] IConfiguration configuration)
         {
-            //FeedsConfiguration feedsConfiguration = configuration.GetSection("Feeds").Get<FeedsConfiguration>();
+            //Создание класса конфигурации и проекция параметров на него
             Config config = new Config();
             configuration.Bind(config);
 
+            //Создание класса валидатора
             ConfigValidator validator = new ConfigValidator();
 
+            //Получение результатов валидации
             ValidationResult results = validator.Validate(config);
 
             if (!results.IsValid)

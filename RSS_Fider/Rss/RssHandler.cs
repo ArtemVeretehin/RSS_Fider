@@ -68,9 +68,9 @@ namespace RSS_Fider.Rss
 
             //Список-контейнер для элементов Rss-ленты
             List<RssItem> Rss_Items = new List<RssItem>();
-
+            var RssFeed_UrlsUniq = RssFeed_Urls.Distinct();
             //Для каждой включенной ленты
-            foreach (string RssFeed_Url in RssFeed_Urls)
+            foreach (string RssFeed_Url in RssFeed_UrlsUniq)
             {
 
                 //Получение Stream с указанного адреса
@@ -107,7 +107,7 @@ namespace RSS_Fider.Rss
                         }
 
                         //Добавление элемента Rss в список
-                        Rss_Items.Add(new RssItem(RSI.Title.Text, RSI.Links[0].Uri.ToString(), RSI.Summary.Text, PublishTime_ForClient.DateTime.ToString()));
+                        Rss_Items.Add(new RssItem(RSI.Title.Text, RSI.Links[0].Uri.ToString(), RSI.Summary.Text, PublishTime_ForClient.DateTime.ToString("dd.MM.yyyy HH:mm:ss")));
                     }
                 }
             }
